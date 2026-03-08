@@ -1,9 +1,10 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext();
+const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || '').replace(/\/$/, '');
 
 const apiRequest = async (path, options = {}) => {
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(`${API_BASE_URL}/api${path}`, {
     ...options,
     credentials: 'include',
     headers: {
