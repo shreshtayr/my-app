@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:4000",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -13,6 +14,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "start:api": "node server/auth-server.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

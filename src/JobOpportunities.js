@@ -63,6 +63,13 @@ const JobOpportunities = ({ setCurrentPage, category }) => {
     return categoryJobs || [];
   }, [categoryJobs, isGroupedJobs, selectedStream]);
 
+  const pageTitle = isGroupedJobs && selectedStream ? `${selectedStream} Jobs` : `${category} Jobs`;
+
+  const pageDescription =
+    isGroupedJobs && selectedStream
+      ? `Job opportunities related to ${selectedStream}.`
+      : `Job opportunities for ${category}.`;
+
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
       const matchesSearch = job.toLowerCase().includes(searchTerm.toLowerCase().trim());
@@ -77,7 +84,9 @@ const JobOpportunities = ({ setCurrentPage, category }) => {
       Diploma: 'jobs-diploma',
       ITI: 'jobs-iti',
       '10/SSLC': 'jobs-10sslc',
-      'After PU/12th Education': 'jobs-after-pu12th-education'
+      'After PU/12th Education': 'jobs-after-pu12th-education',
+      'After Diploma Education': 'jobs-after-diploma-education',
+      'After ITI Education': 'jobs-after-iti-education'
     };
     localStorage.setItem('selectedJobName', jobName);
     localStorage.setItem('selectedJobCategory', category);
@@ -85,13 +94,35 @@ const JobOpportunities = ({ setCurrentPage, category }) => {
     setCurrentPage('job-info');
   };
 
+  const getBackPage = () => {
+    if (
+      category !== 'After PU/12th Education' &&
+      category !== 'After Diploma Education' &&
+      category !== 'After ITI Education'
+    ) {
+      return 'jobs';
+    }
+    const jobsBackPage = localStorage.getItem('selectedJobsBackPage');
+    if (jobsBackPage) {
+      localStorage.removeItem('selectedJobsBackPage');
+      return jobsBackPage;
+    }
+    if (category === 'After Diploma Education') {
+      return 'after-diploma-education';
+    }
+    if (category === 'After ITI Education') {
+      return 'after-iti-education';
+    }
+    return 'after-pu12th-education';
+  };
+
   return (
     <div className="webpage">
       <Header setCurrentPage={setCurrentPage} />
       <main className="webpage-main">
         <section className="career-explore-section">
-          <h1>{category} Jobs</h1>
-          <p>Job opportunities for {category}.</p>
+          <h1>{pageTitle}</h1>
+          <p>{pageDescription}</p>
           {isGroupedJobs && (
             <div style={{ marginBottom: '16px', textAlign: 'left' }}>
               <label htmlFor="stream-select" style={{ display: 'block', marginBottom: '8px', fontWeight: 600 }}>
@@ -156,7 +187,7 @@ const JobOpportunities = ({ setCurrentPage, category }) => {
           <div className="page-nav-buttons">
             <button
               className="page-back-btn"
-              onClick={() => setCurrentPage(category === 'After PU/12th Education' ? 'after-pu12th-education' : 'jobs')}
+              onClick={() => setCurrentPage(getBackPage())}
             >
               Back
             </button>

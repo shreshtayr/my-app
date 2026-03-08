@@ -6,9 +6,10 @@ const Login = ({ setCurrentPage }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, user } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -22,7 +23,11 @@ const Login = ({ setCurrentPage }) => {
       return;
     }
 
-    if (login(username, password)) {
+    setSubmitting(true);
+    const authenticated = await login(username, password);
+    setSubmitting(false);
+
+    if (authenticated) {
       setUsername('');
       setPassword('');
       setCurrentPage('home');
@@ -59,8 +64,8 @@ const Login = ({ setCurrentPage }) => {
             />
           </div>
 
-          <button type="submit" className="submit-btn">
-            Login
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? 'Logging in...' : 'Login'}
           </button>
 
           <p className="register-link">

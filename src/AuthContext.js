@@ -2,97 +2,112 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext();
 
+const apiRequest = async (path, options = {}) => {
+  const response = await fetch(`/api${path}`, {
+    ...options,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+  });
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  return { response, data };
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Load user data from localStorage on mount
   useEffect(() => {
-    const storedUserRaw = localStorage.getItem('registeredUser');
-    const storedLoginStatus = localStorage.getItem('isLoggedIn');
-    
-    if (storedUserRaw) {
+    const loadAuthState = async () => {
       try {
-        const parsed = JSON.parse(storedUserRaw);
-        const { username, password } = parsed;
-        setUser({ username, password });
-      } catch {}
-    }
-    
-    if (storedLoginStatus === 'true') {
-      setIsLoggedIn(true);
-    }
-    
-    setLoading(false);
+        const { response, data } = await apiRequest('/me', { method: 'GET' });
+        if (response.ok && data?.user?.username) {
+          setUser({ username: data.user.username });
+          setIsLoggedIn(true);
+        } else {
+          setUser(null);
+          setIsLoggedIn(false);
+        }
+      } catch {
+        setUser(null);
+        setIsLoggedIn(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAuthState();
   }, []);
 
-  const register = (userData) => {
-    // only keep relevant fields (username, password)
-    const stored = { username: userData.username, password: userData.password };
-    setUser(stored);
-    setIsLoggedIn(true);
-    // Store user data in localStorage
-    localStorage.setItem('registeredUser', JSON.stringify(stored));
-    localStorage.setItem('isLoggedIn', 'true');
-    // also store username and password explicitly
-    localStorage.setItem('username', stored.username);
-    localStorage.setItem('password', stored.password);
-  };
+  const register = async (userData) => {
+    try {
+      const { response, data } = await apiRequest('/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: userData.username,
+          password: userData.password,
+        }),
+      });
 
-  const login = (username, password) => {
-    // determine stored credentials: prefer context user but fall back to localStorage
-    let stored = user;
-    if (!stored) {
-      const raw = localStorage.getItem('registeredUser');
-      if (raw) {
-        try {
-          stored = JSON.parse(raw);
-        } catch {}
+      if (!response.ok || !data?.user?.username) {
+        return { success: false, error: data?.error || 'Registration failed' };
       }
-    }
 
-    if (stored && stored.username === username && stored.password === password) {
-      setUser(stored);
+      setUser({ username: data.user.username });
       setIsLoggedIn(true);
-      // Store login status in localStorage
-      localStorage.setItem('isLoggedIn', 'true');
-      return true;
+      return { success: true };
+    } catch {
+      return { success: false, error: 'Server unavailable. Try again.' };
     }
-    return false;
   };
 
-  const logout = () => {
-    setIsLoggedIn(false);
-    setUser(null);
-    // Clear login status from localStorage
-    localStorage.setItem('isLoggedIn', 'false');
-    // optionally clear stored credentials
-    localStorage.removeItem('username');
-    localStorage.removeItem('password');
-  };
+  const login = async (username, password) => {
+    try {
+      const { response, data } = await apiRequest('/login', {
+        method: 'POST',
+        body: JSON.stringify({ username, password }),
+      });
 
-  const resetPassword = (username, newPassword) => {
-    // Find and update the user's password
-    let stored = user;
-    if (!stored) {
-      const raw = localStorage.getItem('registeredUser');
-      if (raw) {
-        try {
-          stored = JSON.parse(raw);
-        } catch {}
+      if (!response.ok || !data?.user?.username) {
+        return false;
       }
-    }
 
-    if (stored && stored.username === username) {
-      // Update password in memory and storage
-      const updated = { username: stored.username, password: newPassword };
-      setUser(updated);
-      localStorage.setItem('registeredUser', JSON.stringify(updated));
-      localStorage.setItem('password', newPassword);
+      setUser({ username: data.user.username });
+      setIsLoggedIn(true);
       return true;
+    } catch {
+      return false;
     }
-    return false;
+  };
+
+  const logout = async () => {
+    try {
+      await apiRequest('/logout', { method: 'POST' });
+    } catch {}
+    setUser(null);
+    setIsLoggedIn(false);
+  };
+
+  const resetPassword = async (username, newPassword) => {
+    try {
+      const { response } = await apiRequest('/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ username, newPassword }),
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
   };
 
   return (

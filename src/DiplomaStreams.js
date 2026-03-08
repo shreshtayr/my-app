@@ -48,6 +48,12 @@ const DiplomaStreams = ({ setCurrentPage }) => {
               </button>
             ))}
           </div>
+          <p style={{ marginTop: '1rem' }}>What would you like to pursue after this?</p>
+          <div className="page-nav-buttons">
+            <button className="page-next-btn" onClick={() => setCurrentPage('after-diploma-education')}>
+              Explore Here
+            </button>
+          </div>
           <div className="page-nav-buttons">
             <button className="page-back-btn" onClick={goBack}>
               Back

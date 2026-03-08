@@ -8,9 +8,10 @@ const ForgotPassword = ({ setCurrentPage }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { resetPassword } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -30,7 +31,11 @@ const ForgotPassword = ({ setCurrentPage }) => {
       return;
     }
 
-    if (resetPassword(username, newPassword)) {
+    setSubmitting(true);
+    const resetDone = await resetPassword(username, newPassword);
+    setSubmitting(false);
+
+    if (resetDone) {
       setSuccess('Password reset successfully!');
       setUsername('');
       setNewPassword('');
@@ -80,8 +85,8 @@ const ForgotPassword = ({ setCurrentPage }) => {
             />
           </div>
 
-          <button type="submit" className="submit-btn">
-            Reset Password
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? 'Resetting...' : 'Reset Password'}
           </button>
 
           <p className="login-link">

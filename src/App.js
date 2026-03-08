@@ -20,6 +20,8 @@ import JobInfo from './JobInfo';
 import AfterPU12thEducation from './AfterPU12thEducation';
 import AfterPU12thCommerce from './AfterPU12thCommerce';
 import AfterPU12thArts from './AfterPU12thArts';
+import AfterDiplomaEducation from './AfterDiplomaEducation';
+import AfterITIEducation from './AfterITIEducation';
 import StreamInfo from './StreamInfo';
 
 function AppContent() {
@@ -90,6 +92,12 @@ function AppContent() {
       {currentPage === 'jobs-after-pu12th-education' && (
         <JobOpportunities setCurrentPage={setCurrentPage} category="After PU/12th Education" />
       )}
+      {currentPage === 'jobs-after-diploma-education' && (
+        <JobOpportunities setCurrentPage={setCurrentPage} category="After Diploma Education" />
+      )}
+      {currentPage === 'jobs-after-iti-education' && (
+        <JobOpportunities setCurrentPage={setCurrentPage} category="After ITI Education" />
+      )}
       {currentPage === 'pu-science' && (
         <PUScience setCurrentPage={setCurrentPage} />
       )}
@@ -107,6 +115,12 @@ function AppContent() {
       )}
       {currentPage === 'after-pu12th-arts' && (
         <AfterPU12thArts setCurrentPage={setCurrentPage} />
+      )}
+      {currentPage === 'after-diploma-education' && (
+        <AfterDiplomaEducation setCurrentPage={setCurrentPage} />
+      )}
+      {currentPage === 'after-iti-education' && (
+        <AfterITIEducation setCurrentPage={setCurrentPage} />
       )}
       {currentPage === 'stream-info' && (
         <StreamInfo setCurrentPage={setCurrentPage} />

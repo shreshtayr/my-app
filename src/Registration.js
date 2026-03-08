@@ -6,9 +6,10 @@ const Registration = ({ setCurrentPage }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { register } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -22,7 +23,15 @@ const Registration = ({ setCurrentPage }) => {
       return;
     }
 
-    register({ username, password });
+    setSubmitting(true);
+    const result = await register({ username, password });
+    setSubmitting(false);
+
+    if (!result.success) {
+      setError(result.error || 'Registration failed');
+      return;
+    }
+
     setUsername('');
     setPassword('');
     setCurrentPage('home');
@@ -56,8 +65,8 @@ const Registration = ({ setCurrentPage }) => {
             />
           </div>
 
-          <button type="submit" className="submit-btn">
-            Register
+          <button type="submit" className="submit-btn" disabled={submitting}>
+            {submitting ? 'Registering...' : 'Register'}
           </button>
 
           <p className="login-link">
