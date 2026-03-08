@@ -70,12 +70,16 @@ const Login = ({ setCurrentPage }) => {
 
           <p className="register-link">
             Don't have an account?{' '}
-            <a onClick={() => setCurrentPage('register')}>Register here</a>
+            <button type="button" className="text-link-btn" onClick={() => setCurrentPage('register')}>
+              Register here
+            </button>
           </p>
 
           <p className="register-link">
             Forgot your password?{' '}
-            <a onClick={() => setCurrentPage('forgot-password')}>Reset it here</a>
+            <button type="button" className="text-link-btn" onClick={() => setCurrentPage('forgot-password')}>
+              Reset it here
+            </button>
           </p>
         </form>
       </div>

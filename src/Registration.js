@@ -71,7 +71,9 @@ const Registration = ({ setCurrentPage }) => {
 
           <p className="login-link">
             Already have an account?{' '}
-            <a onClick={() => setCurrentPage('login')}>Login here</a>
+            <button type="button" className="text-link-btn" onClick={() => setCurrentPage('login')}>
+              Login here
+            </button>
           </p>
         </form>
       </div>

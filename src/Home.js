@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Auth.css';
 import Header from './Header';
 import Footer from './Footer';
-import { useAuth } from './AuthContext';
 
 const Home = ({ setCurrentPage }) => {
-  const { user, logout } = useAuth();
   const [currentThought, setCurrentThought] = useState(0);
 
   const thoughts = [

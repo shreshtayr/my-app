@@ -600,8 +600,22 @@ input[type="password"]:focus {
   text-decoration: none;
 }
 
+.text-link-btn {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: none;
+}
+
 .login-link a:hover,
 .register-link a:hover {
+  text-decoration: underline;
+}
+
+.text-link-btn:hover {
   text-decoration: underline;
 }
 
@@ -777,8 +791,21 @@ input:focus {
   transition: color 0.3s ease;
 }
 
+.text-link-btn {
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
 .login-link a:hover,
 .register-link a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.text-link-btn:hover {
   color: #764ba2;
   text-decoration: underline;
 }
